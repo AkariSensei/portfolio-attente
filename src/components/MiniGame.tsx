@@ -17,11 +17,11 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
     };
 
     return (
-        <div className="mt-16 flex flex-col items-center relative">
-            <h2 className="text-2xl mb-4">Pendant que tu attends :</h2>
+        <div className="mt-12 sm:mt-16 flex flex-col items-center relative px-4">
+            <h2 className="text-lg sm:text-2xl mb-4 font-semibold">Pendant que tu attends :</h2>
             <button
                 onClick={handleButtonClick}
-                className="btn btn-primary text-xl px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-transform relative"
+                className="btn btn-primary text-lg sm:text-xl px-5 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:scale-105 transition-transform relative"
             >
                 Clique-moi !
                 {plusOne.map((id) => (
@@ -36,7 +36,7 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
                     </motion.span>
                 ))}
             </button>
-            <p className="mt-4 text-lg">Score : {score}</p>
+            <p className="mt-3 text-base sm:text-lg">Score : {score}</p>
         </div>
     );
 }
