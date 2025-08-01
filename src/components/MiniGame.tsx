@@ -23,7 +23,7 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
                 onClick={handleButtonClick}
                 className="btn btn-primary text-lg sm:text-xl px-5 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg hover:scale-105 transition-transform relative"
             >
-                Clique-moi !
+                Clique !
                 {plusOne.map((id) => (
                     <motion.span
                         key={id}
