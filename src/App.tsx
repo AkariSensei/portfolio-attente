@@ -18,10 +18,16 @@ interface Particle {
 }
 
 export default function App() {
-    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const [score, setScore] = useState<number>(() => parseInt(localStorage.getItem("clickerScore") || "0"));
+    const [timeLeft, setTimeLeft] = useState({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    });
+    const [score, setScore] = useState<number>(() =>
+        parseInt(localStorage.getItem("clickerScore") || "0")
+    );
 
-    // Génération des particules UNE SEULE FOIS
     const [particles] = useState<Particle[]>(() =>
         Array.from({ length: 40 }).map((_, i) => ({
             id: i,
@@ -53,29 +59,30 @@ export default function App() {
     }, [score]);
 
     return (
-        <div className="relative min-h-screen overflow-hidden flex flex-col items-center justify-start pt-10">
-            {/* Particules fixes qui clignotent */}
+        <div className="relative min-h-screen flex flex-col items-center justify-start pt-10">
+            {/* Particules */}
             {particles.map((p) => (
                 <motion.div
                     key={p.id}
                     className={`particle absolute rounded-full ${p.size} ${p.color} shadow-[0_0_6px_#4ade80]`}
-                    style={{ left: p.left, top: p.top }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
+                    style={{left: p.left, top: p.top}}
+                    animate={{opacity: [0.2, 1, 0.2]}}
                     transition={{
                         delay: p.delay,
                         duration: p.duration,
                         repeat: Infinity,
                         repeatType: "reverse",
-                        ease: "easeInOut",
+                        ease: "easeInOut"
                     }}
                 />
             ))}
 
-            <div className="main-content w-full relative z-10">
-                <Header />
-                <Timer timeLeft={timeLeft} />
-                <MiniGame score={score} setScore={setScore} />
+            <div className="main-content w-full relative z-10 flex flex-col items-center gap-10">
+                <Header/>
+                <Timer timeLeft={timeLeft}/>
+                <MiniGame score={score} setScore={setScore}/>
             </div>
+
         </div>
     );
 }
