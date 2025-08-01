@@ -77,7 +77,7 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
         // Nettoyer le texte après l'animation
         setTimeout(() => {
             setFloatingTexts(prev => prev.filter(text => text.id !== floatingText.id));
-        }, 800);
+        }, 1000);
     }, [getScoreIncrement, lastClickTime, combo, setScore]);
 
     const getButtonColor = () => {
@@ -145,18 +145,18 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
                 {floatingTexts.map((text) => (
                     <div
                         key={text.id}
-                        className="absolute pointer-events-none z-10"
+                        className="absolute pointer-events-none z-10 animate-bounce opacity-100"
                         style={{
                             left: '50%',
                             top: '50%',
                             transform: `translate(calc(-50% + ${text.x}px), calc(-50% + ${text.y}px))`,
-                            animation: `float-up 0.8s ease-out forwards`
+                            transition: 'opacity 1s ease-out, transform 1s ease-out',
                         }}
                     >
                         <span className={`
                             text-2xl font-bold
                             ${text.value > 1 ? 'text-yellow-400' : 'text-green-400'}
-                            drop-shadow-md
+                            drop-shadow-md animate-pulse
                         `}>
                             +{text.value}
                         </span>
@@ -188,19 +188,6 @@ export default function MiniGame({ score, setScore }: MiniGameProps) {
                     </p>
                 </div>
             )}
-
-            <style jsx>{`
-                @keyframes float-up {
-                    0% {
-                        opacity: 1;
-                        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px))) scale(1);
-                    }
-                    100% {
-                        opacity: 0;
-                        transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 0px) - 60px)) scale(1.2);
-                    }
-                }
-            `}</style>
         </div>
     );
 }
