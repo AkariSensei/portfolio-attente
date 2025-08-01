@@ -4,7 +4,7 @@ export default function Header() {
     return (
         <div className="flex flex-col sm:flex-row items-center gap-4 px-4 sm:px-10 mt-4 sm:mt-0">
             <img
-                src="../../src/assets/img/avatar-moi.png"
+                src="./avatar-moi.png"
                 alt="Avatar"
                 className="w-28 h-28 sm:w-48 sm:h-48 rounded-full border-4 border-[color:var(--color-primary)] shadow-lg"
             />
