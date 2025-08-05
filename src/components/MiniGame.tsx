@@ -60,8 +60,14 @@ export default function MiniGame() {
             .from("scores")
             .update({ value: pendingScore.current })
             .eq("id", 1);
-        if (error) console.error("Erreur maj score :", error);
-        else pendingScore.current = null;
+        if (error) {
+            console.error("Erreur maj score :", error);
+            setErrorMessage("Impossible d'enregistrer le score.");
+        }
+        else {
+            setErrorMessage(null);
+            pendingScore.current = null;
+        }
     }
 
     const scheduleSync = () => {
@@ -79,17 +85,6 @@ export default function MiniGame() {
         // Score en attente
         pendingScore.current = newScore;
         scheduleSync();
-
-        const { error } = await supabase
-            .from("scores")
-            .update({ value: newScore })
-            .eq("id", 1);
-        if (error) {
-            console.error("Erreur maj score :", error);
-            setErrorMessage("Impossible d'enregistrer le score.");
-        } else {
-            setErrorMessage(null);
-        }
 
         const id = Date.now();
         setPlusOne((prev) => [...prev, id]);
