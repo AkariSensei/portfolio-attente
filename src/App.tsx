@@ -24,9 +24,6 @@ export default function App() {
         minutes: 0,
         seconds: 0
     });
-    const [score, setScore] = useState<number>(() =>
-        parseInt(localStorage.getItem("clickerScore") || "0")
-    );
 
     const [particles] = useState<Particle[]>(() =>
         Array.from({ length: 40 }).map((_, i) => ({
@@ -54,10 +51,6 @@ export default function App() {
         return () => clearInterval(timer);
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem("clickerScore", score.toString());
-    }, [score]);
-
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-start pt-10">
             {/* Particules */}
@@ -80,7 +73,7 @@ export default function App() {
             <div className="main-content w-full relative z-10 flex flex-col items-center gap-10">
                 <Header/>
                 <Timer timeLeft={timeLeft}/>
-                <MiniGame score={score} setScore={setScore}/>
+                <MiniGame />
             </div>
 
         </div>
