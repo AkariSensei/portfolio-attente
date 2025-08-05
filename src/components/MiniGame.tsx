@@ -38,15 +38,19 @@ export default function MiniGame() {
             .channel("score-changes")
             .on(
                 "postgres_changes",
-                { event: "UPDATE", schema: "public", table: "scores", filter: "id=eq.1" },
+                { event: "UPDATE", schema: "public", table: "scores" },
                 (payload) => {
-                    const newValue = payload.new.value;
-                    setScore(newValue);
+                    if (payload.new.id === 1) {
+                        setScore((prev) =>
+                            prev !== payload.new.value ? payload.new.value : prev
+                        );
+                    }
                 }
             )
             .subscribe();
 
         window.addEventListener("beforeunload", flushPendingScore);
+
         return () => {
             window.removeEventListener("beforeunload", flushPendingScore);
             supabase.removeChannel(channel);
