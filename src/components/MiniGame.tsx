@@ -6,6 +6,7 @@ export default function MiniGame() {
     const [score, setScore] = useState(0);
     const [plusOne, setPlusOne] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchScore = async () => {
@@ -15,7 +16,8 @@ export default function MiniGame() {
                 .eq("id", 1)
                 .single();
             if (error) {
-                console.log("Erreur de récupération du score :", error);
+                console.error("Erreur de récupération du score :", error);
+                setErrorMessage("Impossible de charger le score depuis la BDD.");
             } else if (data) {
                 setScore(data.value);
             }
@@ -32,7 +34,12 @@ export default function MiniGame() {
             .from("scores")
             .update({ value: newScore })
             .eq("id", 1);
-        if (error) console.error("Erreur maj score :", error);
+        if (error) {
+            console.error("Erreur maj score :", error);
+            setErrorMessage("Impossible d'enregistrer le score.");
+        } else {
+            setErrorMessage(null);
+        }
 
         const id = Date.now();
         setPlusOne((prev) => [...prev, id]);
@@ -43,6 +50,9 @@ export default function MiniGame() {
 
     return (
         <div className="mt-12 sm:mt-16 flex flex-col items-center relative px-4">
+            {errorMessage && (
+                <p className="text-red-500 font-semibold mb-4">{errorMessage}</p>
+            )}
             <h2 className="text-lg sm:text-2xl mb-4 font-semibold">Pendant que tu attends :</h2>
             <button
                 onClick={handleButtonClick}
