@@ -27,7 +27,11 @@ export default function MiniGame() {
             }
             setLoading(false);
         }
-        fetchScore().catch(console.error);
+        fetchScore().catch((error) => {
+            console.log("Erreur réseau :", error);
+            setErrorMessage("Erreur réseau lors du chargement du score.");
+            setLoading(false);
+        });
 
         // Abonnement temps réel BDD
         const channel = supabase
