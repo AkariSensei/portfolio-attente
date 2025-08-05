@@ -3,13 +3,13 @@ import { motion } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
 export default function MiniGame() {
-    const [serverScore, setServerScore] = useState(0);
+    const [serverScore, setServerScore] = useState<bigint>(0n);
     const [plusOne, setPlusOne] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     // Score synchronisation
-    const pendingScore = useRef<number | null>(null);
+    const pendingScore = useRef<bigint | null>(null);
     const syncTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
@@ -23,7 +23,7 @@ export default function MiniGame() {
                 console.error("Erreur de récupération du score :", error);
                 setErrorMessage("Impossible de charger le score depuis la BDD.");
             } else if (data) {
-                setServerScore(data.value);
+                setServerScore(BigInt(data.value));
             }
             setLoading(false);
         }
@@ -60,7 +60,7 @@ export default function MiniGame() {
         if (pendingScore.current === null) return;
         const { error } = await supabase
             .from("scores")
-            .update({ value: pendingScore.current })
+            .update({ value: pendingScore.current.toString() })
             .eq("id", 1);
         if (error) {
             console.error("Erreur maj score :", error);
@@ -81,7 +81,7 @@ export default function MiniGame() {
     };
 
     const handleButtonClick = async () => {
-        const newScore = serverScore + 1;
+        const newScore = serverScore + 1n;
         setServerScore(newScore);
 
         // Score en attente
@@ -118,7 +118,7 @@ export default function MiniGame() {
                     </motion.span>
                 ))}
             </button>
-            <p className="mt-3 text-base sm:text-lg">Score : {serverScore}</p>
+            <p className="mt-3 text-base sm:text-lg">Score : {serverScore.toString()}</p>
         </div>
     );
 }
