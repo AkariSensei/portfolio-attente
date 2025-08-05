@@ -29,9 +29,23 @@ export default function MiniGame() {
         }
         fetchScore().catch(console.error);
 
+        // Abonnement temps réel BDD
+        const channel = supabase
+            .channel("score-changes")
+            .on(
+                "postgres_changes",
+                { event: "UPDATE", schema: "public", table: "scores", filter: "id=eq.1" },
+                (payload) => {
+                    const newValue = payload.new.value;
+                    setScore(newValue);
+                }
+            )
+            .subscribe();
+
         window.addEventListener("beforeunload", flushPendingScore);
         return () => {
             window.removeEventListener("beforeunload", flushPendingScore);
+            supabase.removeChannel(channel);
             flushPendingScore(); // Forcage d'une sync
         }
     }, []);
