@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
 export default function MiniGame() {
-    const [score, setScore] = useState(0);
+    const [serverScore, setServerScore] = useState(0);
     const [plusOne, setPlusOne] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function MiniGame() {
                 console.error("Erreur de récupération du score :", error);
                 setErrorMessage("Impossible de charger le score depuis la BDD.");
             } else if (data) {
-                setScore(data.value);
+                setServerScore(data.value);
             }
             setLoading(false);
         }
@@ -41,9 +41,7 @@ export default function MiniGame() {
                 { event: "UPDATE", schema: "public", table: "scores" },
                 (payload) => {
                     if (payload.new.id === 1) {
-                        setScore((prev) =>
-                            prev !== payload.new.value ? payload.new.value : prev
-                        );
+                        setServerScore(payload.new.value);
                     }
                 }
             )
@@ -83,8 +81,8 @@ export default function MiniGame() {
     };
 
     const handleButtonClick = async () => {
-        const newScore = score + 1;
-        setScore(newScore);
+        const newScore = serverScore + 1;
+        setServerScore(newScore);
 
         // Score en attente
         pendingScore.current = newScore;
@@ -120,7 +118,7 @@ export default function MiniGame() {
                     </motion.span>
                 ))}
             </button>
-            <p className="mt-3 text-base sm:text-lg">Score : {score}</p>
+            <p className="mt-3 text-base sm:text-lg">Score : {serverScore}</p>
         </div>
     );
 }
