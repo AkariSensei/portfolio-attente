@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import { motion } from "framer-motion";
 import { supabase } from "../lib/supabase";
 
@@ -7,6 +7,10 @@ export default function MiniGame() {
     const [plusOne, setPlusOne] = useState<number[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    // Score synchronisation
+    const pendingScore = useRef<number | null>(null);
+    const syncTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         const fetchScore = async () => {
@@ -24,11 +28,39 @@ export default function MiniGame() {
             setLoading(false);
         }
         fetchScore().catch(console.error);
+
+        window.addEventListener("beforeunload", flushPendingScore);
+        return () => {
+            window.removeEventListener("beforeunload", flushPendingScore);
+            flushPendingScore(); // Forcage d'une sync
+        }
     }, []);
+
+    const flushPendingScore = async () => {
+        if (pendingScore.current === null) return;
+        const { error } = await supabase
+            .from("scores")
+            .update({ value: pendingScore.current })
+            .eq("id", 1);
+        if (error) console.error("Erreur maj score :", error);
+        else pendingScore.current = null;
+    }
+
+    const scheduleSync = () => {
+        if (syncTimeout.current) return;
+        syncTimeout.current = setTimeout(async () => {
+            syncTimeout.current = null;
+            await flushPendingScore();
+        }, 2000); // envoie après 2 sec d’inactivité
+    };
 
     const handleButtonClick = async () => {
         const newScore = score + 1;
         setScore(newScore);
+
+        // Score en attente
+        pendingScore.current = newScore;
+        scheduleSync();
 
         const { error } = await supabase
             .from("scores")
